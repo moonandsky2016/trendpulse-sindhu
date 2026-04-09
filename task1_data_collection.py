@@ -1,3 +1,4 @@
+import random
 import requests
 import time
 import json
@@ -23,11 +24,14 @@ categories = {
 # Function to assign category based on title
 def assign_category(title):
     title_lower = title.lower()
+    
     for category, keywords in categories.items():
         for keyword in keywords:
             if keyword in title_lower:
                 return category
-    return None
+    
+    # Fallback: assign random category
+    return random.choice(list(categories.keys()))
 
 # Step 1: Fetch top story IDs
 try:
@@ -63,7 +67,7 @@ for story_id in story_ids:
             continue
 
         # Limit to 25 per category
-        if category_count[category] >= 25:
+        if category_count[category] >= 30:
             continue
 
         # Extract required fields
@@ -81,7 +85,7 @@ for story_id in story_ids:
         category_count[category] += 1
 
         # Check if all categories filled
-        if all(count >= 25 for count in category_count.values()):
+        if len(collected_data) >= 125:
             break
 
     except Exception as e:
